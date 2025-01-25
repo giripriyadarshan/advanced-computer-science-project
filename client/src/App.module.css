@@ -1,0 +1,29 @@
+.main-div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 100svh;
+}
+
+.chat-window {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 100vh;
+    width: 100%;
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-text-primary-on-background);
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.logout-button {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+}

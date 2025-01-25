@@ -2,6 +2,12 @@
 import {createSignal, onMount, Show, For} from 'solid-js';
 import {useStore} from '../store';
 import {createRoom, listRooms} from '../api/chat';
+import styles from './RoomsPanel.module.scss';
+import '@material/web/button/filled-tonal-button.js';
+import '@material/web/chips/assist-chip.js';
+import '@material/web/chips/filter-chip.js';
+import '@material/web/chips/chip-set.js';
+import '@material/web/textfield/filled-text-field.js';
 
 export default function RoomsPanel(props) {
     // Our global store includes the JWT token
@@ -11,6 +17,7 @@ export default function RoomsPanel(props) {
     const [rooms, setRooms] = createSignal([]);
     const [roomNameInput, setRoomNameInput] = createSignal('');
     const [error, setError] = createSignal('');
+    const [selectedRoom, setSelectedRoom] = createSignal('lobby');
 
     // Fetch existing rooms on mount
     onMount(async () => {
@@ -59,45 +66,67 @@ export default function RoomsPanel(props) {
 
     // The user selects a room from the list
     function handleSelectRoom(r) {
+        console.log(r);
+        setSelectedRoom(r);
         props.onRoomSelected?.(r);
     }
 
+
     return (
-        <div style={{border: '1px solid #ccc', padding: '1rem'}}>
+        <div class={styles["room-panel"]}>
             <h3>Rooms</h3>
+            <div class={styles["room-list"]}>
+                {/* LIST OF ROOMS */}
+                <md-chip-set>
+                    <For each={rooms()} fallback={<p>No rooms yet</p>}>
+                        {(roomName) => (
+                            // <div
+                            //     onClick={() => handleSelectRoom(roomName)}
+                            //     style={{
+                            //         cursor: 'pointer',
+                            //         border: '1px solid #ccc',
+                            //         marginBottom: '0.5rem',
+                            //         padding: '0.5rem',
+                            //         borderRadius: '4px'
+                            //     }}
+                            // >
+                            //     {roomName}
+                            // </div>
 
-            {/* CREATE ROOM FORM */}
-            <form onSubmit={handleCreateRoom} style={{marginBottom: '1rem'}}>
-                <input
-                    type="text"
-                    placeholder="Enter new room name"
-                    value={roomNameInput()}
-                    onInput={(e) => setRoomNameInput(e.currentTarget.value)}
-                />
-                <button type="submit">Create Room</button>
-            </form>
+                            <md-filter-chip onClick={() => handleSelectRoom(roomName)}
+                                            label={roomName}
+                                            selected={roomName === selectedRoom()}
+                                            always-focusable="true"
+                            >
+                                {roomName}
+                            </md-filter-chip>
+                        )}
+                    </For>
+                </md-chip-set>
 
-            <Show when={error()}>
-                <p style={{color: 'red'}}>{error()}</p>
-            </Show>
+                {/* CREATE ROOM FORM */}
+                <form onSubmit={handleCreateRoom}>
+                    {/*<input*/}
+                    {/*    type="text"*/}
+                    {/*    placeholder="Enter new room name"*/}
+                    {/*    value={roomNameInput()}*/}
+                    {/*    onInput={(e) => setRoomNameInput(e.currentTarget.value)}*/}
+                    {/*/>*/}
 
-            {/* LIST OF ROOMS */}
-            <For each={rooms()} fallback={<p>No rooms yet</p>}>
-                {(roomName) => (
-                    <div
-                        onClick={() => handleSelectRoom(roomName)}
-                        style={{
-                            cursor: 'pointer',
-                            border: '1px solid #ccc',
-                            marginBottom: '0.5rem',
-                            padding: '0.5rem',
-                            borderRadius: '4px'
-                        }}
+                    <md-filled-text-field type="text" placeholder="Enter new room name" value={roomNameInput()}
+                                          onInput={(e) => setRoomNameInput(e.currentTarget.value)}
+                                          required="true"
                     >
-                        {roomName}
-                    </div>
-                )}
-            </For>
+
+                    </md-filled-text-field>
+                    {/*<button type="submit">Create Room</button>*/}
+                    <md-filled-tonal-button type="submit">Create Room</md-filled-tonal-button>
+                </form>
+
+                <Show when={error()}>
+                    <p style={{color: 'red'}}>{error()}</p>
+                </Show>
+            </div>
         </div>
     );
 }

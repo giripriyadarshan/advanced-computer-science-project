@@ -1,0 +1,32 @@
+.chat-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  width: 100%;
+  overflow-x: auto;
+
+  & .message-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    overflow-y: auto;
+    max-height: 88vh;
+    width: 98%;
+  }
+
+  & form {
+    width: 98%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+
+  }
+
+  & md-outlined-text-field {
+    width: 100%;
+  }
+}

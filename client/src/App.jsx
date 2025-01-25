@@ -3,6 +3,8 @@ import {useStore} from './store';
 import LoginForm from './components/LoginForm';
 import ChatRoom from './components/ChatRoom';
 import RoomsPanel from "./components/RoomsPanel.jsx";
+import styles from './App.module.css';
+import '@material/web/button/elevated-button.js';
 
 export default function App() {
     const [store, {logout}] = useStore();
@@ -24,12 +26,14 @@ export default function App() {
 
 
     return (
-        <div>
+        <div class={styles["main-div"]}>
             <Show when={isLoggedIn()} fallback={<LoginForm onLogin={() => setIsLoggedIn(true)}/>}>
-                <div style={{display: 'flex', flexDirection: 'row'}}>
+                <div class={styles["chat-window"]}>
                     <RoomsPanel onRoomSelected={handleRoomSelected}/>
                     <ChatRoom room={selectedRoom}/>
-                    <button classList={["logout-button"]} onClick={logoutClicked}>Logout</button>
+                    {/*<button class={styles["logout-button"]} onClick={logoutClicked}>Logout</button>*/}
+                    <md-elevated-button onClick={logoutClicked} class={styles["logout-button"]}>Logout
+                    </md-elevated-button>
                 </div>
             </Show>
         </div>

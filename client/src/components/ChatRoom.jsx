@@ -1,8 +1,9 @@
-// File: src/components/ChatRoom.jsx
-
 import {createSignal, onMount, onCleanup, createEffect} from 'solid-js';
 import {useStore} from '../store';
 import {createChatEventSource, sendMessage, sendHeartbeat} from '../api/chat';
+import styles from './ChatRoom.module.scss';
+import '@material/web/button/outlined-button.js';
+import '@material/web/textfield/outlined-text-field.js';
 
 export default function ChatRoom(props) {
     // If you store the token in a global store, you can grab it here:
@@ -17,8 +18,8 @@ export default function ChatRoom(props) {
     // We'll keep a reference to our EventSource so we can close it and re-initialize it
     let eventSource;
     let heartbeatInterval;
+    let formRef;
 
-    let x = ([]);
 
     // Whenever props.room changes, re-initialize the SSE source
     createEffect(() => {
@@ -83,43 +84,47 @@ export default function ChatRoom(props) {
         }
     }
 
+    function handleInput(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('chatFormSubmit').click();
+            document.getElementById('chatFormInput').focus();
+
+        } else {
+            setMessageText(e.currentTarget.value);
+        }
+    }
+
     return (
-        <div style={{marginLeft: '1rem'}}>
+        <div class={styles["chat-div"]}>
             <h2>Chat Room: {props.room}</h2>
 
-            {/* Messages Display */}
-            <div
-                style={{
-                    border: '1px solid #ccc',
-                    height: '200px',
-                    width: '300px',
-                    overflowY: 'auto',
-                    padding: '0.5rem',
-                    marginBottom: '0.5rem',
-                }}
-            >
-                {messages().map((msg) => (
-                    msg.room === props.room() &&
-                    <div>
-                        <strong>
-                            {/* If the server sets user_id, show it. Otherwise show a default */}
-                            {msg.username ? `${msg.username}` : 'System'}
-                        </strong>
-                        : {msg.message}
-                    </div>
-                ))}
-            </div>
+            <div>
+                {/* Messages Display */}
+                <div class={styles["message-container"]}>
+                    {messages().map((msg) => (
+                        msg.room === props.room() &&
+                        <div>
+                            <strong>
+                                {/* If the server sets user_id, show it. Otherwise show a default */}
+                                {msg.username ? `${msg.username}` : 'System'}
+                            </strong>
+                            : {msg.message}
+                        </div>
+                    ))}
+                </div>
 
-            {/* Send Message Form */}
-            <form onSubmit={handleSend}>
-                <input
-                    type="text"
-                    value={messageText()}
-                    onInput={(e) => setMessageText(e.currentTarget.value)}
-                    style={{width: '200px', marginRight: '0.5rem'}}
-                />
-                <button type="submit">Send</button>
-            </form>
+                {/* Send Message Form */}
+                <form onSubmit={handleSend} ref={formRef} id="chatForm">
+                    <md-outlined-text-field type="text"
+                                            value={messageText()}
+                                            onkeypress={(e) => handleInput(e)}
+                                            onInput={(e) => setMessageText(e.currentTarget.value)}
+                                            label="Message"
+                                            id="chatFormInput">
+                    </md-outlined-text-field>
+                    <md-outlined-button type="submit" id="chatFormSubmit">Send</md-outlined-button>
+                </form>
+            </div>
         </div>
     );
 }
