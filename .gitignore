@@ -1,1 +1,5 @@
 .idea
+.env
+/.local.sql.init
+local.docker-compose.yml
+local.init.sql
