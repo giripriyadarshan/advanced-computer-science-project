@@ -7,10 +7,11 @@ export function StoreProvider(props) {
     // Load existing token from localStorage if available
     const initialToken = localStorage.getItem('token') || null;
     const initialRooms = JSON.parse(localStorage.getItem('rooms')) || [];
+    const initialUser = localStorage.getItem('user') || null;
 
     const [state, setState] = createStore({
         token: initialToken,
-        user: null,
+        user: initialUser,
         rooms: initialRooms
     });
 

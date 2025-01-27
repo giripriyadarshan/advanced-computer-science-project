@@ -19,7 +19,6 @@ export default function ChatRoom(props) {
     const [messageText, setMessageText] = createSignal('');
 
     const [selectedUser, setSelectedUser] = createSignal(null);
-    console.log(store.user);
 
     // We'll keep a reference to our EventSource so we can close it and re-initialize it
     let eventSource;
@@ -45,6 +44,7 @@ export default function ChatRoom(props) {
             //   filter them here:
             if (data.room === props.room()) {
                 setMessages((prev) => [...prev, data]);
+                scrollToBottom();
             }
             // If the server is already returning only this room's messages,
             //   you may omit the filtering check.
@@ -85,6 +85,8 @@ export default function ChatRoom(props) {
         try {
             await sendMessage(token, props.room, messageText());
             setMessageText(''); // Clear the input
+            document.getElementById('chatFormInput').focus();
+            scrollToBottom();
         } catch (err) {
             console.error('Failed to send message:', err);
         }
@@ -93,11 +95,15 @@ export default function ChatRoom(props) {
     function handleInput(e) {
         if (e.key === 'Enter') {
             document.getElementById('chatFormSubmit').click();
-            document.getElementById('chatFormInput').focus();
-
-        } else {
-            setMessageText(e.currentTarget.value);
+            if (e.currentTarget.value === '') {
+                document.getElementById('chatFormInput').focus();
+            }
         }
+    }
+
+    function scrollToBottom() {
+        let messageDisplay = document.getElementById('message-display');
+        messageDisplay.scrollTop = messageDisplay.scrollHeight;
     }
 
     return (
@@ -106,7 +112,7 @@ export default function ChatRoom(props) {
 
             <div>
                 {/* Messages Display */}
-                <div class={styles["message-container"]}>
+                <div class={styles["message-container"]} id={"message-display"}>
                     {messages().map((msg) => (
                         msg.room === props.room() &&
                         <div>
