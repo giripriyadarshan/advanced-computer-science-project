@@ -3,6 +3,9 @@ use argon2::{
     Algorithm as Argon2Algorithm, Argon2, Params, Version,
 };
 
+use axum::extract::Path;
+use axum::http::HeaderValue;
+use axum::routing::get;
 use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::post, Json, Router};
 use dotenv::dotenv;
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
@@ -57,7 +60,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
     let db_pool = PgPoolOptions::new()
-        .max_connections(5)
+        .acquire_timeout(std::time::Duration::from_secs(30))
+        .max_connections(20)
         .connect(database_url.as_str())
         .await?;
 
@@ -80,13 +84,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //     ])
     //     .allow_credentials(true);
 
-    let cors = CorsLayer::permissive();
+    let origins = env::var("CORS_ORIGIN").unwrap();
+    let origins: Vec<HeaderValue> = origins
+        .split(',')
+        .map(|h| h.trim().parse().unwrap())
+        .collect();
+
+    let cors = CorsLayer::very_permissive().allow_origin(origins);
 
     let app_state = Arc::new(AppState { db_pool });
 
     let app = Router::new()
         .route("/register", post(register_user))
         .route("/login", post(login_user))
+        .route("/user/{username}", get(get_user_details))
         .layer(cors)
         .with_state(app_state);
 
@@ -186,4 +197,27 @@ async fn login_user(
     .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Token creation error"))?;
 
     Ok::<_, (StatusCode, &'static str)>(Json(TokenResponse { token }))
+}
+
+async fn get_user_details(
+    State(state): State<Arc<AppState>>,
+    Path(username): Path<String>,
+) -> impl IntoResponse {
+    let user = sqlx::query_as!(
+        User,
+        r#"
+        SELECT id, full_name, username
+        FROM users
+        WHERE username = $1
+        "#,
+        username
+    )
+    .fetch_optional(&state.db_pool)
+    .await
+    .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "DB error"))?;
+
+    match user {
+        Some(user) => Ok(Json(user)),
+        None => Err((StatusCode::NOT_FOUND, "User not found")),
+    }
 }

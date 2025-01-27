@@ -29,4 +29,16 @@
   & md-outlined-text-field {
     width: 100%;
   }
+
+  & strong {
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &.own-username {
+      color: #a293e5;
+    }
+  }
 }

@@ -4,6 +4,9 @@ import {createChatEventSource, sendMessage, sendHeartbeat} from '../api/chat';
 import styles from './ChatRoom.module.scss';
 import '@material/web/button/outlined-button.js';
 import '@material/web/textfield/outlined-text-field.js';
+import '@material/web/dialog/dialog.js';
+import '@material/web/iconbutton/icon-button.js';
+import UserDetail from "./UserDetail.jsx";
 
 export default function ChatRoom(props) {
     // If you store the token in a global store, you can grab it here:
@@ -14,6 +17,9 @@ export default function ChatRoom(props) {
     const [messages, setMessages] = createSignal([]);
     // We'll have a signal for the user's text input
     const [messageText, setMessageText] = createSignal('');
+
+    const [selectedUser, setSelectedUser] = createSignal(null);
+    console.log(store.user);
 
     // We'll keep a reference to our EventSource so we can close it and re-initialize it
     let eventSource;
@@ -104,7 +110,10 @@ export default function ChatRoom(props) {
                     {messages().map((msg) => (
                         msg.room === props.room() &&
                         <div>
-                            <strong>
+                            <strong
+                                onClick={() => setSelectedUser(msg.username)}
+                                class={`${msg.username === store.user ? styles["own-username"] : ""}`}
+                            >
                                 {/* If the server sets user_id, show it. Otherwise show a default */}
                                 {msg.username ? `${msg.username}` : 'System'}
                             </strong>
@@ -125,6 +134,26 @@ export default function ChatRoom(props) {
                     <md-outlined-button type="submit" id="chatFormSubmit">Send</md-outlined-button>
                 </form>
             </div>
+
+            {/* User Details */}
+
+
+            <md-dialog open={selectedUser()}>
+                    <span slot={"headline"}>
+                       <span> User Details: {selectedUser()}</span>
+                        <md-icon-button form="form" value="close" aria-label="Close dialog"
+                                        onClick={() => setSelectedUser(null)}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                                                 viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path
+                                                d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                        </md-icon-button>
+                    </span>
+                <form slot="content" method="dialog">
+                    <UserDetail username={selectedUser()}/>
+                </form>
+            </md-dialog>
+
+
         </div>
     );
 }

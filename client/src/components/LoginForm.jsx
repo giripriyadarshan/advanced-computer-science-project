@@ -2,6 +2,7 @@ import {createSignal, Show} from 'solid-js';
 import {useStore} from '../store';
 import {loginUser, registerUser} from '../api/auth';
 import {createRoom} from "../api/chat.js";
+import {jwtDecode} from "jwt-decode";
 import styles from './LoginForm.module.scss';
 import '@material/web/button/outlined-button.js';
 import '@material/web/button/filled-button.js';
@@ -23,11 +24,11 @@ export default function LoginForm(props) {
         try {
             if (mode() === 'register') {
                 await registerUser(fullName(), username(), password());
-                // Optionally immediately log in after successful registration
             }
             const token = await loginUser(username(), password());
+            const decoded = jwtDecode(token);
             setToken(token);
-            setUser({username: username()});
+            setUser(decoded.username);
             setError('');
             try {
                 await createRoom(token, 'lobby');

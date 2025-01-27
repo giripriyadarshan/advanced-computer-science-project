@@ -11,6 +11,7 @@ use axum::{
 use dotenv::dotenv;
 use futures::stream::Stream;
 use http::header::AUTHORIZATION;
+use http::HeaderValue;
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use rustls::crypto::ring::default_provider;
 use serde::{Deserialize, Serialize};
@@ -305,7 +306,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         cleanup_inactive_users(cleanup_state).await;
     });
 
-    let cors = CorsLayer::very_permissive();
+    let origins = env::var("CORS_ORIGIN").unwrap();
+    let origins: Vec<HeaderValue> = origins
+        .split(',')
+        .map(|h| h.trim().parse().unwrap())
+        .collect();
+
+    let cors = CorsLayer::very_permissive().allow_origin(origins);
 
     let app = Router::new()
         .route("/message", post(post_message))

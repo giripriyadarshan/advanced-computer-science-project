@@ -42,6 +42,8 @@
     --md-sys-color-surface-container-highest: #282a36;
     --md-sys-color-secondary-container: #7df39b;
     --md-sys-color-surface-container-low: #27293a;
+    --md-dialog-container-color: #282a36;
+    --md-sys-color-on-surface-variant: #f8f8f2;
 }
 
 body, html {

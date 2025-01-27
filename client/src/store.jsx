@@ -26,7 +26,10 @@ export function StoreProvider(props) {
                     localStorage.removeItem('token');
                 }
             },
-            setUser: (user) => setState('user', user),
+            setUser: (user) => {
+                setState('user', user)
+                localStorage.setItem('user', user);
+            },
             setRooms: (rooms) => {
                 setState('rooms', rooms);
                 localStorage.setItem('rooms', JSON.stringify(rooms));
