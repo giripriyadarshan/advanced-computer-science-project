@@ -117,7 +117,11 @@ export default function ChatRoom(props) {
                         msg.room === props.room() &&
                         <div>
                             <strong
-                                onClick={() => setSelectedUser(msg.username)}
+                                onClick={
+                                    () => {
+                                        setSelectedUser(msg.username)
+                                    }
+                                }
                                 class={`${msg.username === store.user ? styles["own-username"] : ""}`}
                             >
                                 {/* If the server sets user_id, show it. Otherwise show a default */}
@@ -144,17 +148,18 @@ export default function ChatRoom(props) {
             {/* User Details */}
 
 
-            <md-dialog open={selectedUser()}>
-                    <span slot={"headline"}>
+            <md-dialog open={selectedUser()} tabIndex="-1">
+                    <span slot={"headline"} tabIndex="2">
                        <span> User Details: {selectedUser()}</span>
-                        <md-icon-button form="form" value="close" aria-label="Close dialog"
+                        <md-icon-button form="user-details-form" value="close" aria-label="Close dialog"
+                                        tabIndex="3"
                                         onClick={() => setSelectedUser(null)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" height="24px"
                                                  viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path
                                                 d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                         </md-icon-button>
                     </span>
-                <form slot="content" method="dialog">
+                <form slot="content" method="dialog" id={"user-details-form"} tabIndex="-1">
                     <UserDetail username={selectedUser()}/>
                 </form>
             </md-dialog>

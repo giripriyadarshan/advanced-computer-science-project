@@ -66,7 +66,6 @@ export default function RoomsPanel(props) {
 
     // The user selects a room from the list
     function handleSelectRoom(r) {
-        console.log(r);
         setSelectedRoom(r);
         props.onRoomSelected?.(r);
     }

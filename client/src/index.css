@@ -44,6 +44,7 @@
     --md-sys-color-surface-container-low: #27293a;
     --md-dialog-container-color: #282a36;
     --md-sys-color-on-surface-variant: #f8f8f2;
+    --md-focus-ring-color: #ff79c6;
 }
 
 body, html {
