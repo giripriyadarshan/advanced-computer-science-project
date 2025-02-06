@@ -1,4 +1,4 @@
-const USER_SERVICE_URL = 'http://35.234.68.161';
+const USER_SERVICE_URL = 'https://user-service-dot-eastern-kit-447119-p5.ew.r.appspot.com';
 
 export async function registerUser(fullName, username, password) {
     const response = await fetch(`${USER_SERVICE_URL}/register`, {

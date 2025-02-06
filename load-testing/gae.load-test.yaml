@@ -14,7 +14,7 @@ config:
     timeout: 120
     maxSockets: 100
   variables:
-    user_service: "http://35.234.68.161"
+    user_service: "https://user-service-dot-eastern-kit-447119-p5.ew.r.appspot.com"
     chat_service: "https://chat-service-dot-eastern-kit-447119-p5.ew.r.appspot.com"
     chat_room: "general"
     password: "testPassword123"
