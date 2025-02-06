@@ -7,9 +7,13 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:7878,http://0.0.0.0:7878,http://127.0.0.1:7878,http://34.8.161.33,http://34.8.83.223,http://193.197.74.39,https://chatter-haus-frontend-vite-dot-my-new-project-447415.lm.r.appspot.com"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    #    networking.gke.io/managed-certificates: "acs-gke-cert"
+    kubernetes.io/ingress.global-static-ip-name: acs-ip
+    kubernetes.io/ingress.class: "gce"
 spec:
-  ingressClassName: nginx
+  ingressClassName: gce
   rules:
+    #    - host: "acs.giripriyadarshan.com"
     - http:
         paths:
           - path: /chat
