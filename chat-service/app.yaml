@@ -1,0 +1,10 @@
+runtime: custom
+env: flex
+
+service: chat-service
+
+env_variables:
+  DATABASE_URL: "postgresql://postgres:ateam@127.0.0.1:5432/postgres"
+  PASSWORD_SECRET: "cGFzc3dvcmRzQHJlUGFzc3cwcmQxbmc="
+  TOKEN_SECRET: "VDBrM21lQHNlcjFvdXMxeQ=="
+  CORS_ORIGIN: "http://localhost:8080,http://0.0.0.0:8080,http://127.0.0.1:8080,http://34.8.161.33,http://34.8.83.223,http://193.197.74.39,https://*.appspot.com"

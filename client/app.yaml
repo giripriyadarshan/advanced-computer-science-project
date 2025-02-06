@@ -1,0 +1,5 @@
+# app.yaml
+runtime: nodejs20
+#env: flex
+
+service: chatter-haus-frontend
