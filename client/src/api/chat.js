@@ -1,6 +1,6 @@
 import {EventSourcePolyfill} from 'event-source-polyfill';
 
-const CHAT_SERVICE_URL = 'http://0.0.0.0:8000';
+const CHAT_SERVICE_URL = 'http://34.159.3.169';
 
 // For normal chat POST requests with JWT in Authorization header
 export async function sendMessage(token, room, message) {

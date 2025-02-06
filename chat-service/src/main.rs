@@ -307,12 +307,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     });
 
     let origins = env::var("CORS_ORIGIN").unwrap();
+    info!("CORS origins: {}", origins);
     let origins: Vec<HeaderValue> = origins
         .split(',')
         .map(|h| h.trim().parse().unwrap())
         .collect();
 
-    let cors = CorsLayer::very_permissive().allow_origin(origins);
+    let cors = CorsLayer::very_permissive()
+        .allow_origin(origins)
+        .allow_methods([http::Method::GET, http::Method::POST])
+        .allow_headers([
+            AUTHORIZATION,
+            http::header::ACCEPT,
+            http::header::CONTENT_TYPE,
+        ]);
 
     let app = Router::new()
         .route("/message", post(post_message))
@@ -334,7 +342,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // )
     // .await?;
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8080)); // change it to 8000 to match the kubernetes yaml file or change it in the yaml file. Anything works. By the way this is for App Engine.
     info!("chat-service listening on {}", addr);
 
     // axum_server::bind_rustls(addr, config)

@@ -4,9 +4,12 @@ use argon2::{
 };
 
 use axum::extract::Path;
-use axum::http::HeaderValue;
+use axum::http::header::AUTHORIZATION;
+// use axum::http::HeaderValue;
 use axum::routing::get;
-use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::post, Json, Router};
+use axum::{
+    extract::State, http, http::StatusCode, response::IntoResponse, routing::post, Json, Router,
+};
 use dotenv::dotenv;
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
@@ -84,13 +87,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //     ])
     //     .allow_credentials(true);
 
-    let origins = env::var("CORS_ORIGIN").unwrap();
-    let origins: Vec<HeaderValue> = origins
-        .split(',')
-        .map(|h| h.trim().parse().unwrap())
-        .collect();
+    // let origins = env::var("CORS_ORIGIN").unwrap();
+    // println!("CORS origins: {}", origins);
+    // let origins: Vec<HeaderValue> = origins
+    //     .split(',')
+    //     .map(|h| h.trim().parse().unwrap())
+    //     .collect();
 
-    let cors = CorsLayer::very_permissive().allow_origin(origins);
+    let cors = CorsLayer::default()
+        .allow_origin(tower_http::cors::Any)
+        .allow_methods([http::Method::GET, http::Method::POST])
+        .allow_headers([
+            AUTHORIZATION,
+            http::header::ACCEPT,
+            http::header::CONTENT_TYPE,
+        ]);
 
     let app_state = Arc::new(AppState { db_pool });
 
@@ -101,7 +112,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .layer(cors)
         .with_state(app_state);
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 9000));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8080)); // change it to 9000 to match the kubernetes yaml file or change it in the yaml file. Anything works. By the way this is for App Engine.
     println!("User-service listening on {}", addr);
     axum::serve(TcpListener::bind(addr).await?, app.into_make_service()).await?;
     Ok(())

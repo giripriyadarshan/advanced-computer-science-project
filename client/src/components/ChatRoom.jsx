@@ -146,8 +146,6 @@ export default function ChatRoom(props) {
             </div>
 
             {/* User Details */}
-
-
             <md-dialog open={selectedUser()} tabIndex="-1">
                     <span slot={"headline"} tabIndex="2">
                        <span> User Details: {selectedUser()}</span>

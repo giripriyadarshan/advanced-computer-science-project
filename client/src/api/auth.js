@@ -1,4 +1,4 @@
-const USER_SERVICE_URL = 'http://0.0.0.0:9000';
+const USER_SERVICE_URL = 'http://35.234.68.161';
 
 export async function registerUser(fullName, username, password) {
     const response = await fetch(`${USER_SERVICE_URL}/register`, {
