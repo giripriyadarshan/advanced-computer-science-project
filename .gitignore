@@ -3,3 +3,5 @@
 /.local.sql.init
 local.docker-compose.yml
 local.init.sql
+
+kubernetes/secret.yaml

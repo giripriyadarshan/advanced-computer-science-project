@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: main-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:7878,http://0.0.0.0:7878,http://127.0.0.1:7878,http://34.8.161.33,http://34.8.83.223,http://193.197.74.39,https://chatter-haus-frontend-vite-dot-my-new-project-447415.lm.r.appspot.com"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /chat
+            pathType: Prefix
+            backend:
+              service:
+                name: chat-service
+                port:
+                  number: 80
+          - path: /user
+            pathType: Prefix
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: 80

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat-service
+  template:
+    metadata:
+      labels:
+        app: chat-service
+    spec:
+      containers:
+        - name: chat-service
+          image: "europe-west3-docker.pkg.dev/eastern-kit-447119-p5/advanced-computer-science/chat-service:1.0.5"
+          env:
+            - name: PASSWORD_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: PASSWORD_SECRET
+            - name: TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: TOKEN_SECRET
+            - name: CORS_ORIGIN
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: CORS_ORIGIN
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 200m
+              memory: 512Mi
