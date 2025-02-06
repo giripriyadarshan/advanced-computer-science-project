@@ -1,0 +1,52 @@
+config:
+  target: "https://chat-service-dot-eastern-kit-447119-p5.ew.r.appspot.com/"
+  phases:
+    - duration: 10
+      arrivalRate: 2
+      name: Warm up
+    - duration: 10
+      rampTo: 7
+      name: Ramp up
+    - duration: 30
+      arrivalRate: 10
+      name: Sustain load
+  http:
+    timeout: 120
+    maxSockets: 100
+  variables:
+    user_service: "http://35.234.68.161"
+    chat_service: "https://chat-service-dot-eastern-kit-447119-p5.ew.r.appspot.com"
+    chat_room: "general"
+    password: "testPassword123"
+
+scenarios:
+  - name: "User service flow"
+    flow:
+      - post:
+          url: "{{ user_service }}/register"
+          json:
+            full_name: "Test User {{ $uuid }}"
+            username: "user_{{ $uuid }}"
+            password: "{{ password }}"
+      - post:
+          url: "{{ user_service }}/login"
+          json:
+            username: "user_{{ $uuid }}"
+            password: "{{ password }}"
+          capture:
+            - json: "$.token"
+              as: "jwtToken"
+      - loop:
+          - post:
+              url: "{{ chat_service }}/message"
+              headers:
+                Authorization: "Bearer {{ jwtToken }}"
+              form:
+                room: "{{ chat_room }}"
+                message: "Test message {{ $loopCount }}"
+                timestamp: "1738721885"
+                username: "user_{{ $uuid }}"
+        count: 50
+
+plugins:
+  metrics-by-endpoint: { }
